@@ -1,0 +1,65 @@
+┌────────────────────────────┐
+│ 1. TCP Connection Accepted │   ← via OS socket (port 80/443)
+└────────────┬───────────────┘
+             │
+┌────────────▼───────────────┐
+│ 2. Connection Setup        │
+│   • Determine client IP    │
+│   • TLS handshake (if HTTPS)
+│   • Read raw HTTP data     │
+└────────────┬───────────────┘
+             │
+┌────────────▼───────────────┐
+│ 3. Request Parsing         │
+│   • Parse request line     │ → method, URI, version
+│   • Parse headers          │ → Host, User-Agent, etc.
+│   • Store in internal struc│ (request_rec)
+└────────────┬───────────────┘
+             │
+┌────────────▼───────────────┐
+│ 4. Virtual Host Selection  │
+│   • Match `Host:` header   │
+│   • Or use IP/port (vhost) │
+└────────────┬───────────────┘
+             │
+┌────────────▼───────────────┐
+│ 5. URI → File Mapping      │
+│   • Apply `DocumentRoot`,  │
+│     `Alias`, `.htaccess`,  │
+│     `mod_rewrite` rules    │
+│   • Resolve to filesystem  │
+└────────────┬───────────────┘
+             │
+┌────────────▼───────────────┐
+│ 6. Authentication & Authz  │
+│   • Check `AuthType`,      │
+│     `Require`, etc.        │
+│   • Possibly reject (401)  │
+└────────────┬───────────────┘
+             │
+┌────────────▼───────────────┐
+│ 7. Content Generation      │
+│   • Static file → mod_file │
+│   • CGI/PHP → mod_cgi/php  │
+│   • Proxy → mod_proxy      │
+│   • Custom handler → module│
+└────────────┬───────────────┘
+             │
+┌────────────▼───────────────┐
+│ 8. Filters & Output Chain  │
+│   • Compression (mod_deflate)
+│   • Chunked encoding       │
+│   • Logging filters        │
+└────────────┬───────────────┘
+             │
+┌────────────▼───────────────┐
+│ 9. Response Sent           │
+│   • Headers + body written │
+│     to TCP socket          │
+└────────────┬───────────────┘
+             │
+┌────────────▼───────────────┐
+│ 10. Keep-Alive / Close     │
+│   • May reuse connection   │
+│     for next request       │
+└────────────────────────────┘

@@ -1,0 +1,30 @@
+MANUAL TO UNDERSTAND PROCEDURES BEHIND THE CODE
+
+NOTE: code which respective comments have numbers correspond to what it being explained in it
+
+1- memset(&echoserveraddress, 0, sizeof(echoserveraddress))
+Purpose: Initialize the entire sockaddr_in structure to zeros.
+
+Reason: ensures that the padding bytes are cleared, prevents garbage values from interfering
+
+note: it only affects the local value of echoserveraddress
+
+
+2- echoserveraddress.sin_family = AF_INET
+Purpose: sets the address family to IPv4
+NOTE: change to AF_INET6 if you want IPv6
+
+3- echoserveraddress.sin_addr.s_addr = htonl(INADDR_ANY)
+Purpose: set the IP address the server will bind to
+
+NOTE: INADDR_ANY = any network available
+	  htonl() Host To Network Long, converts the 32 bit integer from the host's byte order to network byte order
+
+4- bind(sock, (struct sockaddr *) &echoservaddress, sizeof(echoservaddress))
+
+Purpose: Associates the socket(the file descriptor sock) with a local IP address and port number
+
+NOTE: tells the OS to deliver to this socket data arriving the local IP, which is the corresponding port
+      the struct cast is used to specify the IPv4
+
+	   
