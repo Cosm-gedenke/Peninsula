@@ -10,14 +10,16 @@
 #include "Connection/clientIP.h"
 #include "Connection/rawhttp.h"
 #include "Requestparsing/request.h"
-
+#include "conf/parseconfig.h"
 
 int main(void) {
     /*1- TCP CONNECTION PROTOCOL
         sets up, via OS socket, the fluid connection between the client and the server
         pretty important :) 
     */
-    char *config_file = "./conf/httpd.conf"; 
+    char *config_file = "./conf/httpd.conf";
+    int *count = malloc(sizeof(int));
+    config_hashmap *config_map = parseconfig(config_file, count); 
     int listen_sock = openTCPSocket(8080, 5);
 
     
@@ -31,7 +33,7 @@ int main(void) {
         /* 3- REQUEST PARSING PROTOCOL
             Parses the request line, parses the headers, and stores 
         */
-        request_record *req = parser(buffer);
+        request_hashmap *request_map = parser(buffer);
        
         const char *response = "HTTP/1.1 200 OK\r\n"
             "Content-Type: text/plain\r\n"

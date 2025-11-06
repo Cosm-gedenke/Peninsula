@@ -6,7 +6,7 @@
     config record struct, implemented using a hashmap for efficient lookup
 
 */
-typedef struct {
+typedef struct config_record {
     char *IP;
     char *host;
     char *ipv6host;
@@ -20,10 +20,9 @@ typedef struct {
     config_record *configs[256];
 }config_hashmap;
 
-unsigned int hash(const char *str);
 void configs_insert(config_hashmap *map, config_record *config);
 config_record *configs_lookup(config_hashmap *map, const char *host);
-
+void freeconfig_hash(config_hashmap *map);
 
 
 config_hashmap* parseconfig(const char* file_path, int* out_count);
