@@ -10,6 +10,7 @@ typedef struct config_record {
     char *IP;
     char *host;
     char *ipv6host;
+    char *chosenhost;
     struct config_record *next;
 }config_record;
 
