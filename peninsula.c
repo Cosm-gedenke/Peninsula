@@ -26,7 +26,7 @@ int main(void) {
     int *count = malloc(sizeof(int));
     config_hashmap *config_map = parseconfig(config_file, count); 
     int listen_sock = openTCPSocket(8080, 5);
-
+    char *reqtype = calloc(20,sizeof(char));
     
     for (;;) {
         /* 2- CONNECTION SETUP PROTOCOL
@@ -38,11 +38,10 @@ int main(void) {
         /* 3- REQUEST PARSING PROTOCOL
             Parses the request line, parses the headers, and stores 
         */
-        request_hashmap *request_map = parser(buffer);
-        /* 4- MATCH THE VIRTUAL HOST
+        request_hashmap *request_map = parser(buffer, &reqtype);
+         /* 4- MATCH THE VIRTUAL HOST
             grabs the Host header and verifies it exists, fallback onto main configuration if it doesn't exist
         */
-        printf("bazinga"); fflush(stdout);
         config_record *config = matchost(config_map, request_map, main_config);
 
 
@@ -50,8 +49,7 @@ int main(void) {
             applies document root, might implement more eventually through modules
             resolves to the filesystem
         */
-        printf("bazinga"); fflush(stdout);
-        char *web_path = matchpath(config->chosenhost,request_map); 
+        char *web_path = matchpath(config->chosenhost,request_map, reqtype); 
         const char *response = "HTTP/1.1 200 OK\r\n"
             "Content-Type: text/plain\r\n"
             "Connection: close\r\n"

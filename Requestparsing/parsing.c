@@ -10,7 +10,7 @@
 /*
      does the job and parses the raw http data onto the request_record struct
 */
-request_hashmap *parser(char *buffer) {
+request_hashmap *parser(char *buffer, char **reqtype) {
     if (!buffer)
         ErrorT("given buffer is invalid");
     char* token;
@@ -19,13 +19,14 @@ request_hashmap *parser(char *buffer) {
     int size = 10;
     request_hashmap *map = calloc(1, sizeof(request_hashmap));
         while ((token = strtok_r(rest, "\r\n", &rest))) {
-        request_record *request = calloc(1, sizeof(request_record));
-        if (!request)
-            ErrorT("can't alloc memory");
-        
-        request->header = malloc(strlen(token));
-        request->header = strdup(token);
-        requests_insert(map, request);
+            request_record *request = calloc(1, sizeof(request_record));
+            if (!request)
+                ErrorT("can't alloc memory");
+            request->header = malloc(strlen(token));
+            request->header = strdup(token);
+            requests_insert(map, request);
+            if(strstr(request->header, "HTTP") != NULL) 
+                *reqtype = strdup(token);
     }
     free(token);
     return map;
