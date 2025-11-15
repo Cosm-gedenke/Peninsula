@@ -14,6 +14,8 @@
 #include "host/matchost.h"
 #include "conf/defconfig.h"
 #include "path/matchpath.h"
+#include "response/response.h"
+#include "response/readcontent.h"
 
 int main(void) {
     /*1- TCP CONNECTION PROTOCOL
@@ -27,6 +29,7 @@ int main(void) {
     config_hashmap *config_map = parseconfig(config_file, count); 
     int listen_sock = openTCPSocket(8080, 5);
     char *reqtype = calloc(20,sizeof(char));
+    response_map *global_response = calloc(1, sizeof(response_map));
     
     for (;;) {
         /* 2- CONNECTION SETUP PROTOCOL
@@ -45,11 +48,23 @@ int main(void) {
         config_record *config = matchost(config_map, request_map, main_config);
 
 
-        /* 5- URI and file mapping
+        /* 5- URI AND FILE MAPPING
             applies document root, might implement more eventually through modules
             resolves to the filesystem
         */
-        char *web_path = matchpath(config->chosenhost,request_map, reqtype); 
+        char *web_path = matchpath(config->chosenhost,request_map, reqtype);
+
+        /* 6- AUTHENTICATION AND AUTHORIZATION
+            FIXME not yet implemented
+            not entirely sure where and when this comes into play
+        */
+
+        /* 7- CONTENT GENERATION
+            generates the content preparing it for servicing in the response
+            the initial steps of building the response struct
+        */
+        global_response = readcontent(web_path,reqtype);
+        
         const char *response = "HTTP/1.1 200 OK\r\n"
             "Content-Type: text/plain\r\n"
             "Connection: close\r\n"

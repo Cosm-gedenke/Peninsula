@@ -13,7 +13,6 @@ char* matchpath(char* chosenhost, request_hashmap *map, char *reqtype) {
         ErrorT("can't allocate filepath");
     sprintf(filepath, "%s", chosenhost);
 
-    //FIXME implement functionality for more header types
     request_record *req = requests_lookup(map,reqtype);
     char *path = strtok(req->header, " ");
 
